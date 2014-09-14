@@ -1,10 +1,11 @@
 var http = require('http');
 var fs = require('fs')
+var exec = require('child_process').exec;
 
 var options = {
     hostname: 'zyearn.duoshuo.com',
     port: 80,
-    path: '/api/posts/list.json?order=desc&source=duoshuo%2Crepost&max_depth=1&limit=30&related%5B%5D=thread&related%5B%5D=iplocation&nonce=541285d052af9&status=all',
+    path: '/api/posts/list.json?order=desc&source=duoshuo%2Crepost&max_depth=1&limit=30&related%5B%5D=thread&related%5B%5D=iplocation&nonce=&status=all',
     headers:{
         'Connection': 'Close',
         'Cache-Control': 'max-age=0',
@@ -13,11 +14,12 @@ var options = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
         'Accept-Language': 'zh-CN,zh;q=0.8',
         'Accept-Charset': 'utf-8',
-        'Cookie': 'duoshuo_unique=4214757617811062784; PHPSESSID=do7mnehf79llfvntf2jj471op5'
+        'Cookie': 'duoshuo_unique=; PHPSESSID='
     }
 };
 
-var file_path = "./num";
+var file_path = "/root/duoshuo/num";    // the path of your num file
+var mail = "xxxx@gmail.com";            // the mail that you want to notify
 
 fs.readFile(file_path, function(err, datanum){
     if (err) throw err;
@@ -27,7 +29,6 @@ fs.readFile(file_path, function(err, datanum){
         var size = 0;
         
         res.on('data', function(d) {
-            //console.log('data receid');
             chunks.push(d);
             size += d.length;
         });
@@ -41,6 +42,10 @@ fs.readFile(file_path, function(err, datanum){
                 console.log('no new message');
             }else {
                 // MUTT
+                exec('echo "new comment" | mutt -s "new comment" ' + mail, function (error, stdout, stderr) {
+                    if (err) throw err;
+                });
+                
                 console.log(datanum.toString());
                 console.log(messnum);    
                 console.log('there is new message');
