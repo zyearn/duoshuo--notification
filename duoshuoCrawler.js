@@ -5,7 +5,7 @@ var exec = require('child_process').exec;
 var options = {
     hostname: 'zyearn.duoshuo.com',
     port: 80,
-    path: '/api/posts/list.json?order=desc&source=duoshuo%2Crepost&max_depth=1&limit=30&related%5B%5D=thread&related%5B%5D=iplocation&nonce=&status=all',
+    path: '',           // put your path here
     headers:{
         'Connection': 'Close',
         'Cache-Control': 'max-age=0',
@@ -14,12 +14,13 @@ var options = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36',
         'Accept-Language': 'zh-CN,zh;q=0.8',
         'Accept-Charset': 'utf-8',
-        'Cookie': 'duoshuo_unique=; PHPSESSID='
+        'Cookie': ''    // put your cookie here
     }
 };
 
-var file_path = "/root/duoshuo/num";    // the path of your num file
-var mail = "xxxx@gmail.com";            // the mail that you want to notify
+var file_path = "~/num";    // the path of your num file
+var mail = "xxxxxxx@gmail.com";            // the mail that you want to notify
+var send = require('./mail');
 
 fs.readFile(file_path, function(err, datanum){
     if (err) throw err;
@@ -41,11 +42,8 @@ fs.readFile(file_path, function(err, datanum){
             if (datanum.toString() == messnum){
                 console.log('no new message');
             }else {
-                // MUTT
-                exec('echo "new comment" | mutt -s "new comment" ' + mail, function (error, stdout, stderr) {
-                    if (err) throw err;
-                });
                 
+                send('new message');
                 console.log(datanum.toString());
                 console.log(messnum);    
                 console.log('there is new message');
